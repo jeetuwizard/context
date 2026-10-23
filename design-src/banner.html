@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 2560px; height: 1440px; overflow: hidden; }
+  body {
+    background: #0b0e13;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    position: relative;
+  }
+  /* background layers */
+  .bg-grad {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(1200px 800px at 75% 30%, rgba(242,169,0,0.18), transparent 70%),
+      radial-gradient(1000px 700px at 20% 80%, rgba(255,90,0,0.12), transparent 70%),
+      linear-gradient(135deg, #10141c 0%, #0b0e13 45%, #151016 100%);
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(1400px 900px at 50% 50%, rgba(0,0,0,0.9), transparent 85%);
+    -webkit-mask-image: radial-gradient(1400px 900px at 50% 50%, rgba(0,0,0,0.9), transparent 85%);
+  }
+  /* diagonal stripes left and right (outside safe area, decorative) */
+  .stripe {
+    position: absolute;
+    width: 220px; height: 2200px;
+    top: -380px;
+    transform: rotate(28deg);
+  }
+  .s1 { left: 40px;  background: linear-gradient(180deg, #f2a900, #ff5e00); opacity: .92; }
+  .s2 { left: 300px; background: rgba(242,169,0,0.22); width: 90px; }
+  .s3 { right: 60px; background: linear-gradient(180deg, #ff5e00, #f2a900); opacity: .92; }
+  .s4 { right: 330px; background: rgba(242,169,0,0.22); width: 90px; }
+
+  /* center safe area: 1546 x 423 centered */
+  .safe {
+    position: absolute;
+    left: 507px; top: 508.5px;
+    width: 1546px; height: 423px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .toptag {
+    font-size: 34px; font-weight: 700;
+    letter-spacing: 14px;
+    color: #f2a900;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .title {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: 170px;
+    line-height: 0.95;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow:
+      0 0 28px rgba(242,169,0,0.55),
+      0 6px 0 #c47800,
+      0 12px 28px rgba(0,0,0,0.85);
+  }
+  .title .accent { color: #f2a900; }
+  .divider {
+    width: 760px; height: 4px; margin: 26px 0 20px;
+    background: linear-gradient(90deg, transparent, #f2a900 25%, #ff5e00 75%, transparent);
+    border-radius: 2px;
+  }
+  .subtitle {
+    font-size: 40px; font-weight: 600;
+    letter-spacing: 8px;
+    color: #e8e8ea;
+    text-transform: uppercase;
+  }
+  .subtitle .dot { color: #f2a900; padding: 0 18px; }
+
+  /* crosshair decorations near edges of safe zone */
+  .cross {
+    position: absolute; width: 90px; height: 90px; opacity: .8;
+  }
+  .cross svg { width: 100%; height: 100%; }
+  .c-left  { left: 560px; top: 675px; }
+  .c-right { right: 560px; top: 675px; }
+
+  /* ammo-style tick marks bottom */
+  .ticks {
+    position: absolute; bottom: 120px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 14px;
+  }
+  .ticks i {
+    display: block; width: 14px; height: 34px;
+    background: rgba(242,169,0,0.85);
+    transform: skewX(-18deg);
+  }
+  .ticks i:nth-child(even) { background: rgba(255,255,255,0.25); }
+
+  /* big faint number watermark */
+  .wm {
+    position: absolute;
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: 620px;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -10px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -54%);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="bg-grad"></div>
+  <div class="grid"></div>
+  <div class="stripe s1"></div>
+  <div class="stripe s2"></div>
+  <div class="stripe s3"></div>
+  <div class="stripe s4"></div>
+  <div class="wm">WWCD</div>
+
+  <div class="cross c-left">
+    <svg viewBox="0 0 100 100" fill="none" stroke="#f2a900" stroke-width="5">
+      <circle cx="50" cy="50" r="34"/>
+      <line x1="50" y1="2"  x2="50" y2="26"/>
+      <line x1="50" y1="74" x2="50" y2="98"/>
+      <line x1="2"  y1="50" x2="26" y2="50"/>
+      <line x1="74" y1="50" x2="98" y2="50"/>
+      <circle cx="50" cy="50" r="5" fill="#f2a900" stroke="none"/>
+    </svg>
+  </div>
+  <div class="cross c-right">
+    <svg viewBox="0 0 100 100" fill="none" stroke="#f2a900" stroke-width="5">
+      <circle cx="50" cy="50" r="34"/>
+      <line x1="50" y1="2"  x2="50" y2="26"/>
+      <line x1="50" y1="74" x2="50" y2="98"/>
+      <line x1="2"  y1="50" x2="26" y2="50"/>
+      <line x1="74" y1="50" x2="98" y2="50"/>
+      <circle cx="50" cy="50" r="5" fill="#f2a900" stroke="none"/>
+    </svg>
+  </div>
+
+  <div class="safe">
+    <div class="toptag">The BGMI Wizard</div>
+    <div class="title">JEE<span class="accent">TU</span></div>
+    <div class="divider"></div>
+    <div class="subtitle">Live Streams <span class="dot">•</span> Daily 8 PM</div>
+  </div>
+
+  <div class="ticks">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+</body>
+</html>

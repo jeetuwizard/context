@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 150px; height: 150px; background: transparent; overflow: hidden; }
+  body {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: Arial, sans-serif;
+    gap: 6px;
+  }
+  .hat { width: 64px; height: 48px; }
+  .btn {
+    width: 136px; height: 42px;
+    background: linear-gradient(180deg, #f2a900, #e08900);
+    border-radius: 21px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px; font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #15120a;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.55);
+  }
+</style>
+</head>
+<body>
+  <svg class="hat" viewBox="0 0 400 300">
+    <defs>
+      <linearGradient id="cone" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2a3142"/>
+        <stop offset="1" stop-color="#141927"/>
+      </linearGradient>
+    </defs>
+    <path d="M 110 235
+             C 150 190, 180 120, 196 55
+             C 198 40, 205 30, 222 24
+             C 240 18, 258 26, 262 38
+             C 264 46, 258 52, 250 50
+             C 242 48, 240 40, 233 44
+             C 224 50, 222 62, 220 75
+             C 214 135, 255 195, 292 235 Z"
+          fill="url(#cone)" stroke="#f2a900" stroke-width="12" stroke-linejoin="round"/>
+    <ellipse cx="200" cy="243" rx="165" ry="30"
+             fill="url(#cone)" stroke="#f2a900" stroke-width="12"/>
+    <path d="M 196 120 l 7 16 17 2 -12 12 3 17 -15 -8 -15 8 3 -17 -12 -12 17 -2 Z"
+          fill="#f2a900"/>
+  </svg>
+  <div class="btn">SUBSCRIBE</div>
+</body>
+</html>

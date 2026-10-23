@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 800px; height: 800px; overflow: hidden; }
+  body {
+    position: relative;
+    background:
+      radial-gradient(640px 640px at 50% 30%, #ff9d00, #ff5e00 55%, #d93a00 100%);
+    font-family: Impact, 'Arial Black', sans-serif;
+  }
+  /* subtle rays */
+  .rays {
+    position: absolute; inset: -200px;
+    background: repeating-conic-gradient(from 0deg at 50% 46%,
+      rgba(255,255,255,0.10) 0deg 9deg, transparent 9deg 24deg);
+  }
+  .hat { position: absolute; left: 50%; top: 96px; width: 480px; height: 360px; transform: translateX(-52%); }
+  .name {
+    position: absolute;
+    left: 50%; bottom: 128px;
+    transform: translateX(-50%);
+    font-size: 132px;
+    letter-spacing: 8px;
+    color: #ffffff;
+    -webkit-text-stroke: 5px #1a1206;
+    text-shadow: 0 12px 0 #1a1206, 0 22px 34px rgba(0,0,0,0.45);
+  }
+</style>
+</head>
+<body>
+  <div class="rays"></div>
+
+  <!-- big mascot wizard hat -->
+  <div class="hat">
+    <svg viewBox="0 0 400 300">
+      <defs>
+        <linearGradient id="cone" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#343d52"/>
+          <stop offset="1" stop-color="#10141f"/>
+        </linearGradient>
+        <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#ffd24a"/>
+          <stop offset="1" stop-color="#f2a900"/>
+        </linearGradient>
+      </defs>
+      <path d="M 110 235
+               C 150 190, 180 120, 196 55
+               C 198 40, 205 30, 222 24
+               C 240 18, 258 26, 262 38
+               C 264 46, 258 52, 250 50
+               C 242 48, 240 40, 233 44
+               C 224 50, 222 62, 220 75
+               C 214 135, 255 195, 292 235 Z"
+            fill="url(#cone)" stroke="#1a1206" stroke-width="9" stroke-linejoin="round"/>
+      <path d="M 128 212 C 170 228, 240 228, 276 214 L 288 232 C 240 250, 162 250, 116 230 Z"
+            fill="url(#band)" stroke="#1a1206" stroke-width="5"/>
+      <ellipse cx="200" cy="243" rx="165" ry="30"
+               fill="url(#cone)" stroke="#1a1206" stroke-width="9"/>
+      <path d="M 196 120 l 7 16 17 2 -12 12 3 17 -15 -8 -15 8 3 -17 -12 -12 17 -2 Z"
+            fill="#ffd24a" stroke="#1a1206" stroke-width="4"/>
+      <!-- eyes under the brim for mascot feel -->
+      <g>
+        <ellipse cx="160" cy="272" rx="20" ry="22" fill="#ffffff" stroke="#1a1206" stroke-width="5"/>
+        <ellipse cx="240" cy="272" rx="20" ry="22" fill="#ffffff" stroke="#1a1206" stroke-width="5"/>
+        <circle cx="166" cy="276" r="9" fill="#1a1206"/>
+        <circle cx="246" cy="276" r="9" fill="#1a1206"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="name">JEETU</div>
+</body>
+</html>

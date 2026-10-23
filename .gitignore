@@ -1,0 +1,19 @@
+# Videos and large media live in Google Drive, not git (see docs/08-storage.md)
+*.mp4
+*.mov
+*.mkv
+*.flv
+*.avi
+*.webm
+*.m4a
+*.wav
+*.mp3
+
+# Working folders for processed files before uploading to Drive
+output/
+input/
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store
