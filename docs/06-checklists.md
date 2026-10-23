@@ -25,7 +25,7 @@ Status as of 23 October 2026. Tick items as they finish and commit the change.
 - [ ] Instagram display name `Jeetu 🧙‍♂️ BGMI Live Streamer` and category Gamer
 - [ ] Teammates' YouTube links added to the Instagram bio
 - [ ] Brand email created (e.g. jeetuwizard@gmail.com)
-- [ ] 3–4 reels posted on Instagram before promoting it
+- [ ] 3–4 reels posted on Instagram before promoting it (reel 1 ready: channel promo trailer in `reels/01-channel-promo/`, MP4 in Downloads — upload to Drive and post)
 - [ ] Clan tag in in-game names (e.g. `JW•Jeetu`)
 - [ ] Written team agreement (ownership, credit, revenue split)
 - [ ] Drive subfolders created (layout in `docs/08-storage.md`) and folder shared with teammates

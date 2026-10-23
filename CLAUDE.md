@@ -28,6 +28,7 @@ Do not re-suggest alternatives to these unless he asks.
 - `docs/07-growth-principles.md`
 - `docs/08-storage.md` — what goes in this repo vs the Google Drive folder
 - `assets/final/` — PNGs in use; `design-src/` — their HTML sources
+- `reels/` — code-built motion reels (see `reels/01-channel-promo/README.md` for the method)
 
 Google Drive folder for videos and large files (shared with the team): https://drive.google.com/drive/u/1/folders/1BM1HMgl6o5xHGDHBY0xgfZjO-TuD4z9a
 Team playbook Google Doc: https://docs.google.com/document/d/1E4lZTPFgEhOh3RUF158vVcgi_eFkPW9EokBjWHMQJmw/edit

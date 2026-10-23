@@ -17,3 +17,6 @@ input/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Node tooling for scripts/render-reel.mjs
+node_modules/

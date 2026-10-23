@@ -16,6 +16,7 @@ $jobs = @(
     @{ Html = 'banner.html';                 Out = 'assets\final\banner_wizard.png';         Size = '2560,1440'; Transparent = $false },
     @{ Html = 'profile_picture.html';        Out = 'assets\final\dp_option2.png';            Size = '800,800';   Transparent = $false },
     @{ Html = 'watermark.html';              Out = 'assets\final\watermark_subscribe.png';   Size = '150,150';   Transparent = $true  },
+    @{ Html = 'logo_badge_transparent.html'; Out = 'assets\final\logo_badge_transparent.png'; Size = '800,800'; Transparent = $true  },
     @{ Html = 'alt_profile_wizard_hat.html'; Out = 'assets\alternates\dp_wizard_hat.png';    Size = '800,800';   Transparent = $false },
     @{ Html = 'alt_profile_mascot.html';     Out = 'assets\alternates\dp_mascot.png';        Size = '800,800';   Transparent = $false }
 )

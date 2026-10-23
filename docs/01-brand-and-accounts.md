@@ -38,6 +38,7 @@ All in [`assets/final/`](../assets/final/):
 | `banner_wizard.png` | 2560×1440, all text inside the 1546×423 center safe area | YouTube banner; also Facebook cover |
 | `dp_option2.png` | 800×800 | Profile picture on YouTube, Instagram, Facebook |
 | `watermark_subscribe.png` | 150×150, transparent | YouTube video watermark, display time "Entire video" |
+| `logo_badge_transparent.png` | 800×800, transparent | The hexagon badge without a background, for overlays, reels, and stream scenes |
 
 YouTube upload path: Studio → Customization → Branding.
 

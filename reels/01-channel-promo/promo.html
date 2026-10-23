@@ -1,0 +1,457 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Jeetu Wizard — Channel Promo</title>
+<style>
+  html, body { margin: 0; background: #000; }
+  canvas { display: block; width: 540px; height: 960px; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// Every frame is a pure function of time t (seconds), so scripts/render-reel.mjs
+// can step through it frame by frame. Open in a browser to preview (auto-plays).
+const W = 1080, H = 1920, FPS = 30;
+window.DURATION = 18;
+window.ASSETS = { logo: '../../assets/final/logo_badge_transparent.png' };
+
+const c = document.getElementById('c');
+const g = c.getContext('2d');
+let logo = null;
+
+window.init = async (assets) => {
+  logo = new Image();
+  logo.src = assets.logo;
+  await logo.decode();
+  await document.fonts.ready;
+};
+window.snapshot = () => c.toDataURL('image/png');
+
+// ---------- helpers ----------
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const eOut = p => 1 - Math.pow(1 - p, 3);
+const eInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const eBack = p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const hit = (t, at, k = 8) => t >= at ? Math.exp(-(t - at) * k) : 0;
+function rng(seed) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let x = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x;
+    return ((x ^ x >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+const ORANGE = '#F2A900', ORANGE2 = '#FF5E00', DEPTH = '#C47800', WHITE = '#ffffff';
+const IMPACT = 'Impact, "Arial Black", sans-serif';
+const SEGOE = '"Segoe UI", Arial, sans-serif';
+
+// ---------- timeline ----------
+const BEATS = [0.15, 0.45, 1.35, 1.65, 2.55, 2.85];
+const STAMPS = [[3.9, 'RUSH.'], [4.6, 'SNIPE.'], [5.3, 'CLUTCH.'], [6.0, '1 v 4.']];
+const KILLS = ['Ghost_47', 'ProSniper', 'RushKing', 'TheLastOne'];
+const COUNT = [[6.9, '3'], [7.8, '2'], [8.7, '1']];
+const T_SILENCE = 9.6, T_HIT = 10.1, T_END = 14.2;
+const WWCD = 'WINNER WINNER CHICKEN DINNER';
+const T_TYPE = 12.4, TYPE_STEP = 0.043;
+const END_ITEMS = [14.7, 15.1, 15.6, 16.2];
+
+function shakeAmt(t) {
+  let a = 0;
+  for (const [s] of STAMPS) a += 26 * hit(t, s, 10);
+  for (const [s] of COUNT) a += 10 * hit(t, s, 10);
+  if (t > 6.6 && t < T_SILENCE) a += lerp(0, 12, seg(t, 6.6, T_SILENCE));
+  a += 60 * hit(t, T_HIT, 5);
+  a += 14 * hit(t, 10.6, 10) + 12 * hit(t, 11.0, 10);
+  return a;
+}
+
+// ---------- drawing primitives ----------
+function text(str, x, y, size, color, o = {}) {
+  g.save();
+  g.globalAlpha *= (o.alpha ?? 1);
+  g.translate(x, y);
+  if (o.scale) g.scale(o.scale, o.scale);
+  g.font = `${o.weight || ''} ${size}px ${o.font || IMPACT}`;
+  g.textAlign = o.align || 'center';
+  g.textBaseline = 'middle';
+  const sp = o.spacing || 0;
+  g.letterSpacing = sp + 'px';
+  const dx = g.textAlign === 'center' ? sp / 2 : 0;
+  if (o.depth) {
+    g.fillStyle = o.depth;
+    g.fillText(str, dx, o.depthY || 10);
+  }
+  if (o.glow) { g.shadowColor = o.glow; g.shadowBlur = o.blur || 40; }
+  g.fillStyle = color;
+  g.fillText(str, dx, 0);
+  g.restore();
+}
+
+function nameJeetu(x, y, size, alpha, scale = 1) {
+  if (alpha <= 0) return;
+  g.save();
+  g.globalAlpha = alpha;
+  g.translate(x, y);
+  g.scale(scale, scale);
+  g.font = `${size}px ${IMPACT}`;
+  g.letterSpacing = (size * 0.03) + 'px';
+  g.textBaseline = 'middle';
+  g.textAlign = 'left';
+  const w1 = g.measureText('JEE').width, w2 = g.measureText('TU').width;
+  const x0 = -(w1 + w2) / 2;
+  const d = size * 0.05;
+  g.fillStyle = DEPTH;
+  g.fillText('JEE', x0, d); g.fillText('TU', x0 + w1, d);
+  g.shadowColor = 'rgba(242,169,0,0.7)'; g.shadowBlur = 40;
+  g.fillStyle = WHITE; g.fillText('JEE', x0, 0);
+  g.fillStyle = ORANGE; g.fillText('TU', x0 + w1, 0);
+  g.restore();
+}
+
+function radialGlow(x, y, r, color) {
+  const gr = g.createRadialGradient(x, y, 0, x, y, r);
+  gr.addColorStop(0, color);
+  gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr;
+  g.fillRect(-100, -100, W + 200, H + 200);
+}
+
+function roundRect(x, y, w, h, r) {
+  g.beginPath();
+  g.roundRect(x, y, w, h, r);
+}
+
+const off = document.createElement('canvas');
+off.width = W; off.height = 400;
+const og = off.getContext('2d');
+function glitchText(str, y, size, color, t, intensity, alpha) {
+  if (alpha <= 0) return;
+  og.clearRect(0, 0, W, 400);
+  og.font = `${size}px ${IMPACT}`;
+  og.textAlign = 'center'; og.textBaseline = 'middle';
+  og.letterSpacing = '4px';
+  og.shadowColor = color; og.shadowBlur = 30;
+  og.fillStyle = color;
+  og.fillText(str, W / 2 + 2, 200);
+  const r = rng(Math.floor(t * FPS) * 7 + 3);
+  g.save();
+  if (intensity > 0.2) {
+    g.globalCompositeOperation = 'lighter';
+    g.globalAlpha = alpha * 0.35;
+    g.drawImage(off, -16 * intensity, y - 200);
+    g.drawImage(off, 16 * intensity, y - 200);
+    g.globalCompositeOperation = 'source-over';
+  }
+  g.globalAlpha = alpha;
+  const slices = 20, h = 400 / slices;
+  for (let i = 0; i < slices; i++) {
+    const dx = r() < 0.35 * intensity ? (r() - 0.5) * 140 * intensity : 0;
+    g.drawImage(off, 0, i * h, W, h, dx, y - 200 + i * h, W, h);
+  }
+  g.restore();
+}
+
+const EMBERS = (() => {
+  const r = rng(42);
+  return Array.from({ length: 90 }, () => ({ x: r() * W, sp: 80 + r() * 230, s: 2 + r() * 5, ph: r() * 6.28, o: r() * 3000 }));
+})();
+function embers(t, alpha) {
+  if (alpha <= 0) return;
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  for (const e of EMBERS) {
+    const y = H + 60 - ((t * e.sp + e.o) % (H + 120));
+    const x = e.x + Math.sin(t * 1.3 + e.ph) * 35;
+    const a = alpha * (0.35 + 0.65 * Math.abs(Math.sin(t * 3 + e.ph)));
+    g.fillStyle = `rgba(255,${110 + Math.floor(e.s * 18)},20,${a * 0.18})`;
+    g.beginPath(); g.arc(x, y, e.s * 3.2, 0, 7); g.fill();
+    g.fillStyle = `rgba(255,${150 + Math.floor(e.s * 15)},60,${a})`;
+    g.beginPath(); g.arc(x, y, e.s, 0, 7); g.fill();
+  }
+  g.restore();
+}
+
+function rays(t, cy, alpha) {
+  if (alpha <= 0) return;
+  g.save();
+  g.translate(W / 2, cy);
+  g.rotate(t * 0.12);
+  g.globalCompositeOperation = 'lighter';
+  const n = 14;
+  for (let i = 0; i < n; i++) {
+    g.rotate(Math.PI * 2 / n);
+    const gr = g.createLinearGradient(0, 0, 1500, 0);
+    gr.addColorStop(0, `rgba(242,169,0,${0.16 * alpha})`);
+    gr.addColorStop(1, 'rgba(242,169,0,0)');
+    g.fillStyle = gr;
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(1500, -110); g.lineTo(1500, 110); g.closePath(); g.fill();
+  }
+  g.restore();
+}
+
+// static overlays, built once
+const scan = document.createElement('canvas');
+scan.width = 4; scan.height = 6;
+const sg = scan.getContext('2d');
+sg.fillStyle = 'rgba(0,0,0,0.16)'; sg.fillRect(0, 0, 4, 2);
+const scanPattern = g.createPattern(scan, 'repeat');
+const vignette = (() => {
+  const gr = g.createRadialGradient(W / 2, H / 2, 520, W / 2, H / 2, 1250);
+  gr.addColorStop(0, 'rgba(0,0,0,0)');
+  gr.addColorStop(1, 'rgba(0,0,0,0.85)');
+  return gr;
+})();
+
+// ---------- scenes ----------
+function sceneA(t) {   // 0 – 3.8: heartbeat, setup lines, "ONLY ONE SURVIVES"
+  let pulse = 0;
+  for (const b of BEATS) pulse = Math.max(pulse, hit(t, b, 7));
+  radialGlow(W / 2, H / 2, 1000, `rgba(255,94,0,${0.30 * pulse})`);
+  text('BATTLEGROUNDS MOBILE INDIA', W / 2, 330, 34, ORANGE,
+    { font: SEGOE, weight: '700', spacing: 12, alpha: seg(t, 0.2, 0.8) * (1 - seg(t, 3.5, 3.8)) });
+  const lines = [[0.3, 1.4, '100 PLAYERS'], [1.5, 2.6, 'ONE MAP']];
+  for (const [a, b, str] of lines) {
+    if (t >= a && t < b) {
+      const p = eOut(seg(t, a, a + 0.3));
+      text(str, W / 2, H / 2, 170, WHITE,
+        { scale: lerp(1.3, 1, p), alpha: p * (1 - seg(t, b - 0.15, b)), glow: 'rgba(242,169,0,0.5)', spacing: 6 });
+    }
+  }
+  if (t >= 2.7) {
+    const p = eOut(seg(t, 2.7, 2.95));
+    const gl = t < 3.0 ? 1 : (Math.sin(t * 40) > 0.6 ? 0.6 : 0.08);
+    const a = p * (1 - seg(t, 3.65, 3.8));
+    glitchText('ONLY ONE', H / 2 - 110, 190, WHITE, t, gl, a);
+    glitchText('SURVIVES', H / 2 + 100, 240, ORANGE, t, gl, a);
+  }
+}
+
+function sceneB(t) {   // 3.8 – 6.6: scope + stamped words + kill feed
+  let idx = -1;
+  for (let i = 0; i < STAMPS.length; i++) if (t >= STAMPS[i][0]) idx = i;
+  const last = idx >= 0 ? STAMPS[idx][0] : 3.8;
+  const cy = H * 0.42;
+  const z = 1 + 0.18 * hit(t, last, 9);
+
+  g.save();
+  g.translate(W / 2, cy);
+  g.scale(z, z);
+  g.rotate((t - 3.8) * 0.25);
+  g.globalAlpha = seg(t, 3.8, 4.0);
+  g.strokeStyle = ORANGE; g.shadowColor = ORANGE; g.shadowBlur = 25;
+  g.lineWidth = 6;
+  g.beginPath(); g.arc(0, 0, 400, 0, Math.PI * 2); g.stroke();
+  g.lineWidth = 3;
+  g.beginPath(); g.arc(0, 0, 60, 0, Math.PI * 2); g.stroke();
+  for (let k = 0; k < 4; k++) {
+    g.rotate(Math.PI / 2);
+    g.lineWidth = 6;
+    g.beginPath(); g.moveTo(90, 0); g.lineTo(470, 0); g.stroke();
+    g.lineWidth = 3;
+    for (let m = 150; m <= 390; m += 60) { g.beginPath(); g.moveTo(m, -14); g.lineTo(m, 14); g.stroke(); }
+  }
+  g.restore();
+
+  if (idx >= 0) {
+    const p = eOut(seg(t, last, last + 0.12));
+    text(STAMPS[idx][1], W / 2, cy, 210, WHITE,
+      { scale: lerp(2.2, 1, p), alpha: p, glow: ORANGE, blur: 50, depth: DEPTH, depthY: 12 });
+    text(`${idx + 1} ELIMINATION${idx ? 'S' : ''}`, W / 2, 270, 46, ORANGE,
+      { font: SEGOE, weight: '800', spacing: 10 });
+  }
+
+  for (let i = 0; i <= idx; i++) {
+    const p = eOut(seg(t, STAMPS[i][0], STAMPS[i][0] + 0.25));
+    const y = 1330 + i * 92, x = lerp(-760, 110, p);
+    g.save();
+    g.globalAlpha = 0.92 * p;
+    g.fillStyle = 'rgba(0,0,0,0.6)'; roundRect(x - 30, y - 36, 760, 72, 10); g.fill();
+    g.fillStyle = ORANGE; g.fillRect(x - 30, y - 36, 8, 72);
+    g.restore();
+    text('JEETU', x + 10, y, 46, ORANGE, { align: 'left', alpha: p });
+    text('✕', x + 190, y, 40, WHITE, { align: 'left', font: '"Segoe UI Symbol", sans-serif', alpha: p });
+    text(KILLS[i], x + 250, y, 42, WHITE, { align: 'left', font: SEGOE, weight: '700', alpha: p });
+  }
+}
+
+function sceneC(t) {   // 6.6 – 9.6: zone closing + countdown
+  const p = eInOut(seg(t, 6.6, 9.5));
+  const R = lerp(1150, 230, p), cx = W / 2, cy = H * 0.47;
+
+  g.save();
+  g.strokeStyle = 'rgba(242,169,0,0.08)'; g.lineWidth = 2;
+  for (let x = 0; x <= W; x += 120) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+  for (let y = 0; y <= H; y += 120) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+  g.restore();
+
+  g.save();
+  g.beginPath();
+  g.rect(-100, -100, W + 200, H + 200);
+  g.arc(cx, cy, R, 0, Math.PI * 2);
+  g.fillStyle = `rgba(255,94,0,${0.20 + 0.18 * seg(t, 6.6, T_SILENCE)})`;
+  g.fill('evenodd');
+  g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2);
+  g.strokeStyle = WHITE; g.lineWidth = 10; g.shadowColor = ORANGE2; g.shadowBlur = 40;
+  g.stroke();
+  g.restore();
+
+  const dp = 1 + 0.25 * Math.abs(Math.sin(t * 6));
+  g.save();
+  g.fillStyle = ORANGE; g.shadowColor = ORANGE; g.shadowBlur = 30;
+  g.beginPath(); g.arc(cx, cy + R * 0.35, 14 * dp, 0, 7); g.fill();
+  g.restore();
+
+  embers(t, 0.35);
+  text('THE ZONE IS CLOSING', W / 2, 330, 52, WHITE,
+    { font: SEGOE, weight: '800', spacing: 8, alpha: seg(t, 6.7, 7.0) });
+
+  let ci = -1;
+  for (let i = 0; i < COUNT.length; i++) if (t >= COUNT[i][0]) ci = i;
+  if (ci >= 0) {
+    const a = COUNT[ci][0], pp = eOut(seg(t, a, a + 0.15));
+    text(COUNT[ci][1], cx, cy, 420, ORANGE,
+      { scale: lerp(1.6, 1, pp), alpha: pp * (1 - seg(t, a + 0.75, a + 0.9)), glow: ORANGE2, blur: 60, depth: '#7a3a00', depthY: 16 });
+  }
+  text('NO PLACE TO HIDE', W / 2, 1560, 54, ORANGE,
+    { font: SEGOE, weight: '800', spacing: 14, alpha: seg(t, 7.6, 8.0) });
+}
+
+function sceneReveal(t) {   // 10.1 – 18: logo reveal, then end card
+  const m = eInOut(seg(t, T_END, T_END + 0.5));          // reveal layout -> end-card layout
+  const logoY = lerp(700, 430, m);
+
+  rays(t, logoY, seg(t, T_HIT, T_HIT + 0.3) * (1 - 0.5 * m));
+  embers(t, 1);
+
+  const sw = seg(t, T_HIT, T_HIT + 0.8);
+  if (sw < 1) {
+    g.save();
+    g.globalAlpha = 1 - sw;
+    g.strokeStyle = ORANGE; g.lineWidth = 34 * (1 - sw);
+    g.shadowColor = ORANGE2; g.shadowBlur = 40;
+    g.beginPath(); g.arc(W / 2, logoY, lerp(260, 1300, eOut(sw)), 0, Math.PI * 2); g.stroke();
+    g.restore();
+  }
+
+  const pin = eBack(seg(t, T_HIT, T_HIT + 0.4));
+  const size = lerp(600, 420, m) * lerp(1.5, 1, pin);
+  g.save();
+  g.globalAlpha = seg(t, T_HIT, T_HIT + 0.08);
+  g.shadowColor = 'rgba(242,169,0,0.55)'; g.shadowBlur = 70;
+  g.drawImage(logo, W / 2 - size / 2, logoY - size / 2, size, size);
+  g.restore();
+
+  const nIn = eOut(seg(t, 10.6, 10.85));
+  nameJeetu(W / 2, lerp(lerp(1280, 1170, nIn), 770, m), lerp(240, 170, m), nIn, lerp(1.25, 1, nIn));
+
+  const tIn = eOut(seg(t, 11.0, 11.3));
+  text('THE BGMI WIZARD', W / 2, lerp(1350, 905, m), lerp(56, 44, m), ORANGE,
+    { font: SEGOE, weight: '800', spacing: lerp(lerp(40, 18, tIn), 14, m), alpha: tIn });
+
+  if (t >= T_TYPE) {
+    const n = clamp(Math.floor((t - T_TYPE) / TYPE_STEP), 0, WWCD.length);
+    const cursor = n < WWCD.length || Math.floor(t * 4) % 2 ? '▌' : '';
+    text(WWCD.slice(0, n) + cursor, W / 2, 1460, 40, WHITE,
+      { font: SEGOE, weight: '700', spacing: 6, alpha: 1 - seg(t, 13.95, T_END) });
+  }
+
+  // end card
+  const [e1, e2, e3, e4] = END_ITEMS;
+  const a1 = eOut(seg(t, e1, e1 + 0.3));
+  if (a1 > 0) {
+    const pulse = 1 + 0.25 * Math.abs(Math.sin(t * 5));
+    const live = 'LIVE DAILY • 8 PM', liveSize = 92, liveX = W / 2 + 30;
+    g.font = `${liveSize}px ${IMPACT}`;
+    g.letterSpacing = '3px';
+    const liveW = g.measureText(live).width;
+    g.save();
+    g.globalAlpha = a1;
+    g.fillStyle = '#ff2b2b'; g.shadowColor = '#ff2b2b'; g.shadowBlur = 30;
+    g.beginPath(); g.arc(liveX - liveW / 2 - 50, 1045, 22 * pulse, 0, 7); g.fill();
+    g.restore();
+    text(live, liveX, 1045, liveSize, WHITE, { alpha: a1, scale: lerp(1.2, 1, a1), spacing: 3 });
+  }
+  const a2 = eOut(seg(t, e2, e2 + 0.3));
+  text('WATCH ON YOUTUBE', W / 2, 1160, 40, WHITE, { font: SEGOE, weight: '700', spacing: 12, alpha: a2 * 0.8 });
+  text('@JeetuWizard', W / 2, 1245, 118, ORANGE, { alpha: a2, glow: 'rgba(242,169,0,0.45)', depth: DEPTH, depthY: 8 });
+  const a3 = seg(t, e3, e3 + 0.35);
+  if (a3 > 0) {
+    const s = eBack(a3) * (1 + 0.04 * Math.sin((t - e3) * 6));
+    g.save();
+    g.translate(W / 2, 1400);
+    g.scale(s, s);
+    g.shadowColor = 'rgba(242,169,0,0.6)'; g.shadowBlur = 40;
+    g.fillStyle = ORANGE; roundRect(-290, -62, 580, 124, 62); g.fill();
+    g.restore();
+    text('SUBSCRIBE', W / 2, 1402, 76, '#15120a', { scale: s, spacing: 4 });
+  }
+  const a4 = eOut(seg(t, e4, e4 + 0.3));
+  text('Follow @jeetuwizard on Instagram', W / 2, 1530, 40, WHITE, { font: SEGOE, weight: '600', alpha: a4 * 0.85 });
+}
+
+// ---------- frame ----------
+window.render = function (t) {
+  const f = Math.round(t * FPS);
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.globalAlpha = 1;
+  g.globalCompositeOperation = 'source-over';
+  g.fillStyle = '#000';
+  g.fillRect(0, 0, W, H);
+
+  if (t >= T_SILENCE && t < T_HIT) {
+    text('ONE NAME.', W / 2, H / 2, 96, WHITE, { alpha: seg(t, 9.68, 9.85), spacing: 8 });
+    overlays(t, f, false);
+    return;
+  }
+
+  const s = shakeAmt(t), rs = rng(f * 13 + 5);
+  g.save();
+  g.translate((rs() - 0.5) * 2 * s, (rs() - 0.5) * 2 * s);
+  g.fillStyle = '#06080c';
+  g.fillRect(-100, -100, W + 200, H + 200);
+  radialGlow(W / 2, H * 0.45, 1100, `rgba(242,169,0,${t >= T_HIT ? 0.28 : 0.10})`);
+  if (t < 3.8) sceneA(t);
+  else if (t < 6.6) sceneB(t);
+  else if (t < T_SILENCE) sceneC(t);
+  else sceneReveal(t);
+  g.restore();
+
+  // cinematic bars until the reveal
+  const bar = t < T_HIT ? 130 : 0;
+  if (bar) { g.fillStyle = '#000'; g.fillRect(0, 0, W, bar); g.fillRect(0, H - bar, W, bar); }
+
+  overlays(t, f, true);
+  const fade = Math.max(1 - seg(t, 0, 0.3), seg(t, 17.4, 18));
+  if (fade > 0) { g.fillStyle = `rgba(0,0,0,${fade})`; g.fillRect(0, 0, W, H); }
+};
+
+function overlays(t, f, flashes) {
+  if (flashes) {
+    let fl = hit(t, T_HIT, 3.2);
+    for (const [s] of STAMPS) fl = Math.max(fl, 0.4 * hit(t, s, 14));
+    for (const [s] of COUNT) fl = Math.max(fl, 0.15 * hit(t, s, 12));
+    if (fl > 0.003) { g.fillStyle = `rgba(255,244,220,${fl})`; g.fillRect(0, 0, W, H); }
+  }
+  g.fillStyle = scanPattern; g.fillRect(0, 0, W, H);
+  const r = rng(f * 31 + 7);
+  g.fillStyle = 'rgba(255,255,255,0.05)';
+  for (let i = 0; i < 700; i++) g.fillRect(r() * W, r() * H, 2, 2);
+  g.fillStyle = vignette; g.fillRect(0, 0, W, H);
+}
+
+// live preview when opened directly in a browser
+if (!navigator.webdriver) {
+  window.init(window.ASSETS).then(() => {
+    const t0 = performance.now();
+    const loop = () => { window.render(((performance.now() - t0) / 1000) % window.DURATION); requestAnimationFrame(loop); };
+    loop();
+  });
+}
+</script>
+</body>
+</html>

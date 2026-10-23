@@ -44,4 +44,8 @@ ffmpeg -ss START -to END -i "INPUT.mp4" -i assets/final/watermark_subscribe.png 
 
 Give the full output path, and remind the user to upload it to Drive `03 Reels Final`. Suggested caption: credit the player, e.g. "Clutch by @name 🧙‍♂️ — full stream on YouTube, link in bio", plus `#BGMI #JeetuWizard #WWCD`.
 
+## Trailer / promo reels without footage
+
+For an advertisement-style reel with no gameplay, follow the method in `reels/01-channel-promo/`: copy the folder to `reels/<nn-name>/`, change the timeline constants, scenes, and text in `promo.html` and the matching event times in `sound.py`, preview a few moments, then render (steps in that folder's README). Check a contact sheet of preview frames and the waveform before handing over.
+
 When the pipeline is turned into a reusable script, save it in `scripts/` and update `docs/05-video-editing.md`.

@@ -9,11 +9,7 @@
 
 ## ffmpeg pipeline (planned, not built yet)
 
-ffmpeg is not installed yet. Install on first use:
-
-```
-winget install ffmpeg
-```
+ffmpeg is installed on the work laptop (9.0.2). On another machine: `winget install ffmpeg`.
 
 Goal: a repeatable **reel maker** — drop a clip into a folder, get back a branded reel:
 
@@ -24,6 +20,16 @@ Goal: a repeatable **reel maker** — drop a clip into a folder, get back a bran
 5. Keep under 90 seconds, export H.264/AAC for Instagram
 
 When building it, put the script in `scripts/` and document usage here.
+
+## Motion reels made from code
+
+Trailer-style reels without gameplay footage are built as animated canvas pages in `reels/<nn-name>/`:
+`promo.html` (visuals; each frame is a pure function of time), `sound.py` (synthesized soundtrack, no copyrighted audio), and a README with the timeline.
+`scripts/render-reel.mjs` records the page to PNG frames with headless Edge (Node + puppeteer-core, `npm install` once), and ffmpeg muxes frames + sound into the MP4.
+
+| Reel | What | Status |
+|---|---|---|
+| [01-channel-promo](../reels/01-channel-promo/) | 18 s channel trailer: "only one survives" → zone → logo reveal → LIVE daily 8 PM end card | Rendered 23 Oct 2026, not posted yet |
 
 ## How Claude made the image assets
 

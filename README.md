@@ -32,6 +32,8 @@ Everything about the **Jeetu — The BGMI Wizard 🧙‍♂️** channel in one 
 | [assets/alternates/](assets/alternates/) | Rejected profile picture options, kept for reference |
 | [design-src/](design-src/) | HTML/CSS/SVG sources for every asset |
 | [scripts/render-assets.ps1](scripts/render-assets.ps1) | Re-renders all PNGs from the design sources |
+| [reels/](reels/) | Code-built motion reels (trailer/promo), one folder each with visuals, sound, and rebuild steps |
+| [scripts/render-reel.mjs](scripts/render-reel.mjs) | Records a reel page to frames for ffmpeg |
 
 ## Brand at a glance
 
