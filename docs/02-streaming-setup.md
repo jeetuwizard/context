@@ -19,9 +19,23 @@ The capture card shows up in Windows as a webcam. No drivers are needed. Game au
 - **iPad vs Android phone:** iPads with USB-C output HDMI video; most Android phones cannot (no DisplayPort Alt Mode). That's why the Android plan used scrcpy (free USB screen mirroring, Android-only) and the iPad plan uses a capture card.
 - The game runs on the iPad, and Jitender plays looking at the iPad, so any delay in the laptop preview never affects gameplay.
 
-## Temporary test method: AirPlay (free)
+## Without hardware (free)
 
-Use only for practice streams before the capture card arrives.
+Until the capture card arrives, two free options. **Recommended: direct from the iPad**, since the video goes straight to YouTube with no extra WiFi hop.
+
+### Option A: stream directly from the iPad
+
+1. YouTube Studio → Create → Go Live → **Stream** tab → copy the Stream URL and Stream key (keep the key private). Streaming with a key has no subscriber minimum.
+2. Install **PRISM Live Studio** (free, no watermark) on the iPad; Streamlabs works the same way.
+3. PRISM → Settings → Destinations → **Custom RTMP** → paste URL + key. Quality: 720p, 30 fps, ~2500–3000 kbps. Mode: **Screen**.
+4. Control Center → long-press **Screen Recording** → pick PRISM → **Microphone ON** → Start Broadcast → open BGMI.
+5. Stop: tap the red indicator at the top → Stop.
+
+Game audio and mic both go out; use earphones with a mic. Set BGMI graphics to **Smooth** (not HDR) since the iPad runs the game and the encode together.
+
+### Option B: AirPlay to the laptop, then OBS
+
+Use when OBS features are wanted (overlays, logo, webcam).
 
 1. Laptop: install **5KPlayer** (free), turn on its AirPlay service, allow it through Windows Firewall.
 2. iPad and laptop on the same WiFi (5 GHz preferred).
