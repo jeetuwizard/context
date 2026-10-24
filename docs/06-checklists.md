@@ -2,7 +2,7 @@
 
 ## Launch checklist (one-time)
 
-Status as of 23 October 2026. Tick items as they finish and commit the change.
+Status as of 24 October 2026. Tick items as they finish and commit the change.
 
 ### Done
 
@@ -17,9 +17,11 @@ Status as of 23 October 2026. Tick items as they finish and commit the change.
 
 - [ ] PiBOX capture card + hub delivered
 - [ ] YouTube live streaming activated (youtube.com/verify, then ~24 h wait)
-- [ ] OBS installed on the streaming laptop and connected to YouTube
-- [ ] Upload speed measured (fast.com) and OBS bitrate set accordingly
-- [ ] AirPlay test stream (while waiting for hardware)
+- [x] OBS installed (work laptop)
+- [ ] OBS connected to the YouTube account
+- [x] Upload speed measured: ~85–110 Mbps up (work laptop, WiFi) → 1080p30 at 6000 kbps
+- [x] AirPlay mirroring working: iPad → 5KPlayer (+ Bonjour) → OBS Window Capture, on the work laptop
+- [ ] AirPlay test stream to YouTube (unlisted)
 - [ ] Full chain tested: iPad → hub → HDMI → capture card → OBS
 - [ ] Unlisted test stream passed (video, game audio, mic, no buffering)
 - [ ] Instagram display name `Jeetu 🧙‍♂️ BGMI Live Streamer` and category Gamer

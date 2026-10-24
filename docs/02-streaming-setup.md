@@ -40,7 +40,12 @@ Use when OBS features are wanted (overlays, logo, webcam).
 1. Laptop: install **5KPlayer** (free), turn on its AirPlay service, allow it through Windows Firewall.
 2. iPad and laptop on the same WiFi (5 GHz preferred).
 3. iPad: Control Center → Screen Mirroring → pick the laptop.
-4. OBS: Sources → + → Window Capture → the 5KPlayer window.
+4. OBS: Sources → + → Window Capture → the 5KPlayer mirror window (Capture Method "Windows 10 (1903 and up)" if it shows black).
+
+Working on the work laptop as of 24 Oct 2026. Gotchas hit during setup:
+- **AirPlay switches greyed out in 5KPlayer = Apple Bonjour missing.** 5KPlayer didn't install it. Fix: install "Bonjour Print Services for Windows" (`BonjourPSSetup.exe`) from support.apple.com/en-us/106380, then reopen 5KPlayer.
+- The mirror window only exists while the iPad is actively mirroring, so it won't appear in OBS's Window Capture list until then. Don't minimize it (captures black).
+- Installer check: 5KPlayer `5kplayer-64bit.exe` v6.11 is signed by Digiarty Software, Inc. (DigiCert); download only from 5kplayer.com and skip the VideoProc promotion.
 
 ## OBS configuration
 
@@ -54,7 +59,11 @@ Use when OBS features are wanted (overlays, logo, webcam).
 | Bitrate, upload 3–5 Mbps | 2500–3000 kbps, 1280×720, 30 fps |
 | Network | Laptop on a LAN cable to the router |
 
-Upload speed (from fast.com): _not measured yet_
+Measured 24 Oct 2026 on the work laptop over WiFi "wizard 5g": **upload ~85–110 Mbps, download ~128 Mbps**. Bandwidth is not a constraint.
+
+Laptop in use: AMD Ryzen 5 7535HS, Radeon 660M, 27 GB RAM → encoder **AMD HW H.264 (AVC)** (hardware, keeps the CPU free).
+
+Recommended OBS output for this setup: 1920×1080, 30 fps, AMD HW H.264, CBR **6000 kbps**, keyframe interval 2 s.
 
 ## YouTube live requirements
 
